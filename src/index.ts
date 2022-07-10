@@ -32,7 +32,6 @@ export default {
       return new Response(JSON.stringify(result), {
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 's-maxage=86400 immutable',
         },
       })
     }
