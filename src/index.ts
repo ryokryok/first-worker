@@ -32,10 +32,11 @@ export default {
       return new Response(JSON.stringify(result), {
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'max-age=3600',
         },
       })
     }
-    return new Response('This is root', { status: 200 })
+    return new Response('This is root')
   },
 }
 
