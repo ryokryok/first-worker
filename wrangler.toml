@@ -1,3 +1,8 @@
 name = "first-worker"
 main = "src/index.ts"
 compatibility_date = "2022-07-10"
+
+[[kv_namespaces]]
+binding = "kv_first"
+id = "561609dc359746f59b9d95904967c7c8"
+preview_id = "6360586c2c304fb2818c982d02bed898"

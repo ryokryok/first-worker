@@ -11,7 +11,7 @@
 export interface Env {
   API_KEY: string
   // Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
-  // MY_KV_NAMESPACE: KVNamespace;
+  kv_first: KVNamespace
   //
   // Example binding to Durable Object. Learn more at https://developers.cloudflare.com/workers/runtime-apis/durable-objects/
   // MY_DURABLE_OBJECT: DurableObjectNamespace;
@@ -28,11 +28,26 @@ export default {
   ): Promise<Response> {
     const url = new URL(request.url)
     if (url.pathname === '/prefectures') {
+      const cacheResult = await env.kv_first.get('prefectures', {
+        cacheTtl: 86400,
+      })
+      if (cacheResult) {
+        // cache hit
+        return new Response(cacheResult, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+      }
       const result = await fetchApi(env.API_KEY)
-      return new Response(JSON.stringify(result), {
+      const stringified = JSON.stringify(result)
+      ctx.waitUntil(
+        env.kv_first.put('prefectures', stringified, { expirationTtl: 86400 })
+      )
+      return new Response(stringified, {
+        status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'max-age=3600',
         },
       })
     }
